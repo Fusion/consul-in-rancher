@@ -1,0 +1,28 @@
+{% set bsname = groups['rancher'][0].split('.')[0] %}
+{% set bsip   = hostvars[groups['rancher'][0]].ansible_host %}
+{% for item in groups['rancher'] %}
+{% set suffix = item.split('.') %}
+{% set ip = hostvars[item].ansible_host %}
+consul{{ suffix[0] }}:
+  image: "cyansmoker/consul:latest"
+  container_name: "consul{{ suffix[0] }}"
+  hostname: "consul{{ suffix[0] }}"
+  ports:
+    - "8300:8300"
+    - "8301:8301"
+    - "8301:8301/udp"
+    - "8302:8302"
+    - "8302:8302/udp"
+    - "8400:8400"
+    - "8500:8500"
+    - "8600:8600"
+    - "8600:8600/udp"
+  labels:
+    io.rancher.scheduler.affinity:host_label: 'cfrhost={{ suffix[0] }}'
+{% if suffix[0] == bsname %}
+  command: "agent -data-dir /data -config-dir=/etc/consul.d -server -bootstrap-expect 3 -ui-dir /ui -client=0.0.0.0 -dc global -advertise {{ ip }}"
+{% else %}
+  command: "agent -data-dir /data -config-dir=/etc/consul.d -server -join {{ bsip }} -dc global -advertise {{ ip }}"
+{% endif %}
+
+{% endfor %}

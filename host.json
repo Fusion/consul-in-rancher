@@ -1,0 +1,28 @@
+{
+  "checks": [
+    {
+      "id": "chk_mem",
+      "name": "mem",
+      "script": "/etc/consul.d/check_mem.pl -f -w 20 -c 10",
+      "interval": "1m"
+    },
+    {
+      "id": "chk_swap",
+      "name": "swap",
+      "script": "/usr/lib/nagios/plugins/check_swap -w 20 -c 10",
+      "interval": "1m"
+    },
+    {
+      "id": "chk_disk",
+      "name": "disk",
+      "script": "/usr/lib/nagios/plugins/check_disk -w 10% -c 5%",
+      "interval": "1m"
+    },
+    {
+      "id": "chk_cpu",
+      "name": "cpu",
+      "script": "/usr/lib/nagios/plugins/check_load -w 15,10,5 -c 30,25,20",
+      "interval": "1m"
+    }
+  ]
+}

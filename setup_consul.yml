@@ -1,0 +1,15 @@
+# Note: it is assumed that the first host in the rancher group
+# will be the bootstrapper.
+
+- hosts: local
+  vars:
+    workdir: /Users/Chris/Documents/DOCKER/Work/Consul
+  tasks:
+  - name: Make sure work directory exists
+    file: path={{ workdir }} state=directory
+  - name: generate docker-compose.yml
+    template:
+      src=consul_docker_compose.j2
+      dest={{ workdir }}/docker-compose.yml
+  - name: ask rancher to create and launch stack
+    command: chdir={{ workdir }} rancher-compose up
